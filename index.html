@@ -1,205 +1,254 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Game Xuyên Không PRO MAX</title>
+  <title>Xuyên Không</title>
   <style>
     body {
       font-family: Arial;
       background: linear-gradient(to right, #141e30, #243b55);
       color: white;
       text-align: center;
+      overflow: hidden;
     }
 
-    #box {
+    .box {
       background: rgba(0,0,0,0.6);
       padding: 20px;
       margin: 50px auto;
       width: 350px;
-      border-radius: 10px;
+      border-radius: 15px;
     }
 
     button {
       padding: 10px;
       margin: 5px;
+      border-radius: 10px;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
     }
 
-    #popup {
+    #fireworkCanvas {
       position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: black;
-      padding: 30px;
-      border-radius: 10px;
-      display: none;
-      font-size: 20px;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .money {
+      position: fixed;
+      font-size: 24px;
+      animation: fly 1s linear forwards;
+    }
+
+    @keyframes fly {
+      0% {opacity: 1; transform: translateY(0);}
+      100% {opacity: 0; transform: translateY(-200px);}
     }
   </style>
 </head>
 
 <body>
 
-<div id="box">
-  <h1>🌌 Game Xuyên Không</h1>
+<h1>🌌 Xuyên Không: Làm Lại Cuộc Đời</h1>
 
-  <p>💰 Tiền: <span id="money">100</span></p>
-  <p>😵 Stress: <span id="stress">0</span></p>
-  <p>❤️ Tình cảm: <span id="love">0</span></p>
+<div class="box">
   <p>🎂 Tuổi: <span id="age">18</span></p>
+  <p>💰 Tiền: <span id="money">100</span></p>
+  <p>🧠 IQ: <span id="iq">50</span></p>
+  <p>😄 Hạnh phúc: <span id="happy">50</span></p>
+  <p>❤️ Tình yêu: <span id="love">0</span></p>
+  <p>💼 Nghề: <span id="job">Thất nghiệp</span></p>
+  <p>💑 Người yêu: <span id="ny">Chưa có</span></p>
 
+  <button onclick="hoc()">📚 Học</button>
   <button onclick="lamViec()">💼 Làm việc</button>
-  <button onclick="choiGame()">🎮 Giải trí</button>
+  <button onclick="dauTu()">📈 Đầu tư</button>
   <button onclick="henHo()">💘 Hẹn hò</button>
-  <button onclick="suKien()">🎲 Sự kiện</button>
+  <button onclick="nghi()">😴 Nghỉ</button>
+  <br>
   <button onclick="mayMan()" id="luckBtn">🍀 May mắn (1 lần)</button>
 </div>
 
-<div id="popup"></div>
+<canvas id="fireworkCanvas"></canvas>
 
 <script>
-let money = 100;
-let stress = 0;
-let love = 0;
-let usedLuck = false;
+// ===== BIẾN =====
 let age = 18;
+let money = 100;
+let iq = 50;
+let happy = 50;
+let love = 0;
+let job = "Thất nghiệp";
+let ny = "Chưa có";
+let usedLuck = false;
 
-let nguoiYeu = ["Phương Trâm", "Bích Tuyền", "Ngọc Nhi", "Anh Thư", "Bảo Khang"];
+let listNY = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo Khang"];
 
+// ===== UPDATE =====
 function update() {
-  document.getElementById("money").innerText = money;
-  document.getElementById("stress").innerText = stress;
-  document.getElementById("love").innerText = love;
+  age++;
   document.getElementById("age").innerText = age;
+  document.getElementById("money").innerText = money;
+  document.getElementById("iq").innerText = iq;
+  document.getElementById("happy").innerText = happy;
+  document.getElementById("love").innerText = love;
+  document.getElementById("job").innerText = job;
+  document.getElementById("ny").innerText = ny;
   checkEnd();
 }
 
-function showPopup(text) {
-  let p = document.getElementById("popup");
-  p.innerText = text;
-  p.style.display = "block";
-
-  setTimeout(() => {
-    p.style.display = "none";
-  }, 2000);
-}
-
-function lamViec() {
-  money += 50;
-  stress += 10;
-  age++;
-  showPopup("💼 Kiếm tiền +50");
+// ===== HÀNH ĐỘNG =====
+function hoc() {
+  iq += 10;
+  happy -= 5;
+  alert("📚 Bạn học chăm chỉ!");
   update();
 }
 
-function choiGame() {
-  stress -= 10;
-  showPopup("🎮 Giảm stress");
+function lamViec() {
+  money += 100;
+  happy -= 10;
+
+  if(iq > 120) job = "Sếp";
+  else if(iq > 80) job = "Nhân viên giỏi";
+
+  alert("💼 Kiếm tiền!");
+  update();
+}
+
+function dauTu() {
+  let r = Math.random();
+  if(r < 0.5){
+    money += 300;
+    alert("📈 Đầu tư thắng!");
+    firework(); // 🎆
+  } else {
+    money -= 200;
+    alert("⚠️ Lỗ nặng!");
+    moneyFly(); // 💸
+  }
   update();
 }
 
 function henHo() {
-  let ny = nguoiYeu[Math.floor(Math.random()*nguoiYeu.length)];
+  let person = listNY[Math.floor(Math.random()*listNY.length)];
+  ny = person;
 
-  let r = Math.random();
-
-  if (r < 0.5) {
-    love += 20;
-    money -= 20;
-    showPopup("❤️ Hẹn hò với " + ny + " +20 tình cảm");
+  if(Math.random() < 0.5){
+    love += 30;
+    happy += 10;
+    alert("❤️ Bạn yêu " + person);
   } else {
-    love -= 30;
-    stress += 20;
-    showPopup("💔 " + ny + " phản bội bạn!");
+    love -= 40;
+    happy -= 20;
+    alert("💔 " + person + " phản bội!");
+    moneyFly();
   }
-
   update();
 }
 
-function suKien() {
-  let r = Math.random();
-
-  if (r < 0.3) {
-    money += 200;
-    showPopup("🎉 Trúng lớn! 💰 +200");
-  } 
-  else if (r < 0.6) {
-    money -= 100;
-    stress += 20;
-    showPopup("⚠️ Bị lừa! -100 tiền");
-  } 
-  else {
-    showPopup("😐 Không có gì xảy ra");
-  }
-
+function nghi() {
+  happy += 15;
+  alert("😴 Nghỉ ngơi");
   update();
 }
 
 function mayMan() {
-  if (usedLuck) return;
-
+  if(usedLuck) return;
   usedLuck = true;
   document.getElementById("luckBtn").disabled = true;
 
   let r = Math.random();
 
-  if (r < 0.33) {
-    money += 300;
-    showPopup("🍀 May mắn tiền!");
-  } else if (r < 0.66) {
+  if(r < 0.33){
+    money += 500;
+    firework();
+    alert("🍀 Trúng lớn!");
+  } else if(r < 0.66){
     love += 50;
-    showPopup("🍀 May mắn tình cảm!");
+    alert("🍀 Tình yêu đến!");
   } else {
-    stress -= 50;
-    showPopup("🍀 Giảm stress!");
+    iq += 30;
+    alert("🍀 Thông minh đột biến!");
   }
 
   update();
 }
 
+// ===== END GAME =====
 function checkEnd() {
 
-  if (money <= 0) {
-    endGame("💀 Bạn phá sản!");
-    return;
+  if(money <= 0){
+    moneyFly();
+    alert("💀 Phá sản!");
+    location.reload();
   }
 
-  if (stress >= 100) {
-    endGame("😵 Bạn kiệt sức!");
-    return;
+  if(happy <= 0){
+    alert("😢 Trầm cảm!");
+    location.reload();
   }
 
-  if (love <= -50) {
-    endGame("💔 Bạn bị phản bội!");
-    return;
+  if(love <= -50){
+    alert("💔 Bị phản bội!");
+    location.reload();
   }
 
-  if (love >= 100) {
-    endGame("💍 Bạn có tình yêu viên mãn!");
-    return;
+  if(money >= 2000){
+    firework();
+    alert("🏆 Đại gia!");
+    location.reload();
   }
 
-  if (money >= 1000 && stress < 80) {
-    endGame("👑 Bạn trở thành đại gia!");
-    return;
+  if(love >= 100){
+    firework();
+    alert("💍 Kết hôn hạnh phúc!");
+    location.reload();
   }
 
-  if (money > 500 && love < 0 && stress < 50) {
-    endGame("🌀 Ending bí mật: Giàu nhưng cô đơn!");
-    return;
-  }
-
-  if (age >= 40 && money < 1000) {
-    endGame("😐 Bạn sống bình thường...");
-    return;
+  if(age >= 40){
+    alert("😐 Cuộc đời bình thường...");
+    location.reload();
   }
 }
 
-function endGame(text) {
-  document.getElementById("popup").style.display = "block";
-  document.getElementById("popup").innerText = text + " (Reload để chơi lại)";
+// ===== PHÁO HOA =====
+let canvas = document.getElementById("fireworkCanvas");
+let ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function firework() {
+  for(let i=0;i<40;i++){
+    let x = canvas.width/2;
+    let y = canvas.height/2;
+    let dx = (Math.random()-0.5)*10;
+    let dy = (Math.random()-0.5)*10;
+
+    let interval = setInterval(()=>{
+      ctx.fillStyle = "yellow";
+      ctx.fillRect(x,y,4,4);
+      x += dx;
+      y += dy;
+    },30);
+
+    setTimeout(()=>clearInterval(interval),500);
+  }
+}
+
+// ===== TIỀN BAY =====
+function moneyFly() {
+  for(let i=0;i<15;i++){
+    let el = document.createElement("div");
+    el.className = "money";
+    el.innerText = "💸";
+    el.style.left = Math.random()*window.innerWidth + "px";
+    el.style.top = "60%";
+    document.body.appendChild(el);
+
+    setTimeout(()=>el.remove(),1000);
+  }
 }
 </script>
 
