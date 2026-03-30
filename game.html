@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Xuyên Không</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🌀 Xuyên Không Làm Lại Cuộc Đời</h1>
+
+<p id="story">
+Bạn tỉnh dậy và quay về năm 18 tuổi. Trong tay có 100.000đ. Bạn sẽ làm gì?
+</p>
+
+<p>💰 Tiền: <span id="money">100000</span></p>
+
+<div id="choices">
+    <button onclick="chon('tieu')">Tiêu xài</button>
+    <button onclick="chon('tietkiem')">Tiết kiệm</button>
+    <button onclick="chon('dautu')">Đầu tư</button>
+</div>
+
+<script>
+let money = 100000;
+
+function chon(action){
+    if(action === 'tieu'){
+        money -= 50000;
+        document.getElementById("story").innerText = "Bạn tiêu xài hoang phí và mất tiền 😢";
+    }
+    else if(action === 'tietkiem'){
+        money += 20000;
+        document.getElementById("story").innerText = "Bạn tiết kiệm được thêm tiền 👍";
+    }
+    else if(action === 'dautu'){
+        let mayman = Math.random();
+        if(mayman > 0.5){
+            money += 50000;
+            document.getElementById("story").innerText = "Đầu tư thành công! 🎉";
+        } else {
+            money -= 30000;
+            document.getElementById("story").innerText = "Đầu tư thất bại 😭";
+        }
+    }
+
+    document.getElementById("money").innerText = money;
+
+    if(money <= 0){
+        document.getElementById("story").innerText = "Bạn phá sản 💀 GAME OVER";
+        document.getElementById("choices").innerHTML = "";
+    }
+
+    if(money >= 200000){
+        document.getElementById("story").innerText = "Bạn trở nên giàu có 🏆 WIN!";
+        document.getElementById("choices").innerHTML = "";
+    }
+}
+</script>
+
+</body>
+</html>
