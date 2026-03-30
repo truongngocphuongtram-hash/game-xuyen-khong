@@ -1,2 +1,12 @@
-# game-xuyen-khong
-vì hối hận một đời không tiết kiệm để gùi trở thành đỗ nghèo khỉ tui quyết định xuyên không về quá khứ làm lại cuộc đời
+# 🎮 Game Xuyên Không
+
+Đây là game chọn lựa về cuộc đời và tài chính.
+
+## 🚀 Cách chơi
+- Bạn có 100.000đ
+- Chọn: tiêu, tiết kiệm hoặc đầu tư
+- Mục tiêu: trở nên giàu có
+
+## 🏆 Kết thúc
+- 💀 Hết tiền = thua
+- 🏆 Đủ tiền = thắng
