@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Xuyên Không Pro</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        #box {
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 15px;
+            width: 420px;
+            margin: auto;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 8px;
+            border: none;
+            border-radius: 10px;
+            background: #00c6ff;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0072ff;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🌌 Game Xuyên Không Làm Giàu</h1>
+
+<div id="box">
+    <p id="story">Bạn quay về năm 18 tuổi với 1 triệu trong tay...</p>
+
+    <p>💰 Tiền: <span id="money">1000000</span></p>
+    <p>🧠 IQ: <span id="iq">50</span></p>
+    <p>❤️ Hạnh phúc: <span id="happy">50</span></p>
+    <p>💖 Tình yêu: <span id="love">0</span></p>
+    <p>💼 Nghề: <span id="job">Thất nghiệp</span></p>
+
+    <div id="choices">
+        <button onclick="hoc()">📚 Học</button>
+        <button onclick="lamviec()">💼 Làm việc</button>
+        <button onclick="dautu()">💸 Đầu tư</button>
+        <button onclick="henho()">💖 Hẹn hò</button>
+        <button onclick="nghi()">😴 Nghỉ ngơi</button>
+    </div>
+</div>
+
+<script>
+let money = 1000000;
+let iq = 50;
+let happy = 50;
+let love = 0;
+let job = "Thất nghiệp";
+
+function update(){
+    document.getElementById("money").innerText = money;
+    document.getElementById("iq").innerText = iq;
+    document.getElementById("happy").innerText = happy;
+    document.getElementById("love").innerText = love;
+    document.getElementById("job").innerText = job;
+
+    // nghề nghiệp mở khóa
+    if(iq >= 80 && job == "Thất nghiệp"){
+        job = "Nhân viên văn phòng";
+        story("🎉 Bạn đã có việc làm!");
+    }
+
+    if(iq >= 120 && money > 5000000){
+        job = "Doanh nhân";
+    }
+
+    // ending
+    if(money <= 0){
+        end("💀 Bạn phá sản!");
+    }
+
+    if(money >= 20000000 && love >= 50){
+        end("👑 Bạn vừa giàu vừa có tình yêu viên mãn!");
+    }
+
+    if(money >= 30000000){
+        end("💰 Bạn trở thành tỷ phú!");
+    }
+
+    if(love >= 100){
+        end("💖 Bạn có tình yêu hoàn hảo!");
+    }
+}
+
+function story(text){
+    document.getElementById("story").innerText = text;
+}
+
+function end(text){
+    story(text);
+    document.getElementById("choices").innerHTML = "<button onclick='location.reload()'>🔄 Chơi lại</button>";
+}
+
+// hành động
+function hoc(){
+    iq += 10;
+    happy -= 5;
+    story("Bạn chăm chỉ học tập!");
+    update();
+}
+
+function lamviec(){
+    if(job == "Thất nghiệp"){
+        story("Bạn chưa có việc!");
+        return;
+    }
+    money += 500000;
+    happy -= 5;
+    story("Bạn đi làm kiếm tiền!");
+    update();
+}
+
+function dautu(){
+    let r = Math.random();
+    if(r > 0.5){
+        money += 1000000;
+        story("📈 Đầu tư lời!");
+    } else {
+        money -= 700000;
+        story("📉 Lỗ rồi!");
+    }
+    update();
+}
+
+function henho(){
+    love += 10;
+    money -= 200000;
+    happy += 5;
+    story("Bạn đi hẹn hò ❤️");
+    update();
+}
+
+function nghi(){
+    happy += 10;
+    story("Bạn nghỉ ngơi thư giãn 😴");
+    update();
+}
+</script>
+
+</body>
+</html>
