@@ -27,6 +27,22 @@
       cursor: pointer;
     }
 
+    /* 🔔 THÔNG BÁO */
+    #notify {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      padding: 15px 25px;
+      border-radius: 10px;
+      display: none;
+      font-size: 18px;
+      z-index: 999;
+      transition: 0.3s;
+    }
+
+    /* 🎆 */
     #fireworkCanvas {
       position: fixed;
       top: 0;
@@ -34,6 +50,7 @@
       pointer-events: none;
     }
 
+    /* 💸 */
     .money {
       position: fixed;
       font-size: 24px;
@@ -69,6 +86,7 @@
   <button onclick="mayMan()" id="luckBtn">🍀 May mắn (1 lần)</button>
 </div>
 
+<div id="notify"></div>
 <canvas id="fireworkCanvas"></canvas>
 
 <script>
@@ -84,6 +102,17 @@ let usedLuck = false;
 
 let listNY = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo Khang"];
 
+// ===== THÔNG BÁO =====
+function showMsg(text) {
+  let box = document.getElementById("notify");
+  box.innerText = text;
+  box.style.display = "block";
+
+  setTimeout(() => {
+    box.style.display = "none";
+  }, 1500);
+}
+
 // ===== UPDATE =====
 function update() {
   age++;
@@ -97,11 +126,11 @@ function update() {
   checkEnd();
 }
 
-// ===== HÀNH ĐỘNG =====
+// ===== ACTION =====
 function hoc() {
   iq += 10;
   happy -= 5;
-  alert("📚 Bạn học chăm chỉ!");
+  showMsg("📚 Bạn học chăm chỉ!");
   update();
 }
 
@@ -112,7 +141,7 @@ function lamViec() {
   if(iq > 120) job = "Sếp";
   else if(iq > 80) job = "Nhân viên giỏi";
 
-  alert("💼 Kiếm tiền!");
+  showMsg("💼 Kiếm tiền!");
   update();
 }
 
@@ -120,12 +149,12 @@ function dauTu() {
   let r = Math.random();
   if(r < 0.5){
     money += 300;
-    alert("📈 Đầu tư thắng!");
-    firework(); // 🎆
+    firework();
+    showMsg("📈 Đầu tư thắng!");
   } else {
     money -= 200;
-    alert("⚠️ Lỗ nặng!");
-    moneyFly(); // 💸
+    moneyFly();
+    showMsg("⚠️ Lỗ nặng!");
   }
   update();
 }
@@ -137,19 +166,19 @@ function henHo() {
   if(Math.random() < 0.5){
     love += 30;
     happy += 10;
-    alert("❤️ Bạn yêu " + person);
+    showMsg("❤️ Bạn yêu " + person);
   } else {
     love -= 40;
     happy -= 20;
-    alert("💔 " + person + " phản bội!");
     moneyFly();
+    showMsg("💔 " + person + " phản bội!");
   }
   update();
 }
 
 function nghi() {
   happy += 15;
-  alert("😴 Nghỉ ngơi");
+  showMsg("😴 Nghỉ ngơi");
   update();
 }
 
@@ -163,13 +192,13 @@ function mayMan() {
   if(r < 0.33){
     money += 500;
     firework();
-    alert("🍀 Trúng lớn!");
+    showMsg("🍀 Trúng lớn!");
   } else if(r < 0.66){
     love += 50;
-    alert("🍀 Tình yêu đến!");
+    showMsg("🍀 Tình yêu đến!");
   } else {
     iq += 30;
-    alert("🍀 Thông minh đột biến!");
+    showMsg("🍀 Thông minh đột biến!");
   }
 
   update();
@@ -177,38 +206,37 @@ function mayMan() {
 
 // ===== END GAME =====
 function checkEnd() {
-
   if(money <= 0){
     moneyFly();
-    alert("💀 Phá sản!");
-    location.reload();
+    showMsg("💀 Phá sản!");
+    setTimeout(()=>location.reload(),1000);
   }
 
   if(happy <= 0){
-    alert("😢 Trầm cảm!");
-    location.reload();
+    showMsg("😢 Trầm cảm!");
+    setTimeout(()=>location.reload(),1000);
   }
 
   if(love <= -50){
-    alert("💔 Bị phản bội!");
-    location.reload();
+    showMsg("💔 Bị phản bội!");
+    setTimeout(()=>location.reload(),1000);
   }
 
   if(money >= 2000){
     firework();
-    alert("🏆 Đại gia!");
-    location.reload();
+    showMsg("🏆 Đại gia!");
+    setTimeout(()=>location.reload(),1200);
   }
 
   if(love >= 100){
     firework();
-    alert("💍 Kết hôn hạnh phúc!");
-    location.reload();
+    showMsg("💍 Kết hôn hạnh phúc!");
+    setTimeout(()=>location.reload(),1200);
   }
 
   if(age >= 40){
-    alert("😐 Cuộc đời bình thường...");
-    location.reload();
+    showMsg("😐 Cuộc đời bình thường...");
+    setTimeout(()=>location.reload(),1200);
   }
 }
 
