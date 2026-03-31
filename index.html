@@ -141,7 +141,7 @@ let iq = 100;
 let money = 1000;
 let savings = 0;
 let investment = 0;
-let job = "Thất nghiệp";
+let job = "ăn bám bố mẹ";
 let lover = null;
 let gameOver = false;
 
@@ -228,7 +228,7 @@ function renderButtons(){
         {
             text:"💼 Làm",
             action:()=>{
-                job="Nhân viên";
+                job="Đời công nhân";
                 money+=400+iq;
                 growAge();
                 showStatus("💼 Bạn đi làm trâu ngựa");
@@ -240,7 +240,7 @@ function renderButtons(){
                 savings+=300;
                 money-=300;
                 growAge();
-                showStatus("🏦 đã tiết kiệm");
+                showStatus("🏦 đã cống tiền cho ngân hàng");
             }
         },
         {
