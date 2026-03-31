@@ -1,3 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Game Xuyên Không</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564") center/cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.panel {
+    width: 420px;
+    background: #dcdcf5;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+#intro { display: block; }
+#game { display: none; }
+
+#status {
+    height: 25px;
+    overflow: hidden;
+    position: relative;
+}
+
+.statusText {
+    position: absolute;
+    width: 100%;
+    animation: slide 2.5s linear;
+}
+
+@keyframes slide {
+    0% { transform: translateY(20px); opacity: 0 }
+    20% { opacity: 1 }
+    80% { opacity: 1 }
+    100% { transform: translateY(-20px); opacity: 0 }
+}
+
+#drama {
+    font-style: italic;
+    height: 25px;
+}
+
+#stats {
+    text-align: left;
+}
+
+button {
+    background: #cbb7ff;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#effect {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.money {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    animation: moneyFly 2.5s ease-out forwards;
+}
+
+@keyframes moneyFly {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1 }
+    100% { transform: translate(-50%, -200px) scale(2); opacity: 0 }
+}
+
+.heart {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 70px;
+    animation: heartBoom 2.5s ease-out forwards;
+}
+
+@keyframes heartBoom {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1 }
+    50% { transform: translate(-50%, -50%) scale(2) }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0 }
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel" id="intro">
+    <h2>Game Xuyên Không</h2>
+    <p>
+        Bạn xuyên không sang thế giới khác...<br><br>
+        Bắt đầu từ con số 0 🌀<br>
+        Tiền bạc - tình yêu - drama đang chờ bạn 💔<br><br>
+        Bạn sẽ trở thành ai?
+    </p>
+    <button onclick="startGame()">✨ Xuyên không</button>
+</div>
+
+<div class="panel" id="game">
+    <h2>Game Xuyên Không</h2>
+    <div id="status"></div>
+    <div id="drama"></div>
+    <div id="stats"></div>
+    <div id="buttons"></div>
+</div>
+
+<div id="effect"></div>
+
 <script>
 let age = 18;
 let iq = 70;
@@ -14,7 +140,7 @@ const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo K
 function startGame(){
     document.getElementById("intro").style.display="none";
     document.getElementById("game").style.display="block";
-    updateUI(); // thêm để cập nhật UI ngay
+    updateUI();
 }
 
 /* STATUS */
@@ -43,7 +169,7 @@ function heartEffect(){
     setTimeout(()=>e.remove(),2500);
 }
 
-/* DRAMA RANDOM */
+/* DRAMA */
 function randomDrama(){
     let events=[
         "💔 trở thành con trâu có sừng dài nhất thế giới",
@@ -62,9 +188,14 @@ function randomDrama(){
 
 /* UI */
 function updateUI(drama=""){
-    document.getElementById("drama").innerText=drama;
+    let dramaEl = document.getElementById("drama");
+    let statsEl = document.getElementById("stats");
 
-    document.getElementById("stats").innerHTML=`
+    if(!dramaEl || !statsEl) return;
+
+    dramaEl.innerText=drama;
+
+    statsEl.innerHTML=`
     🎂 ${age} tuổi<br>
     🧠 ${iq}<br>
     💼 ${job}<br>
@@ -105,9 +236,14 @@ function next(action){
 /* BUTTON */
 function renderButtons(){
     let div = document.getElementById("buttons");
+    if(!div) return;
+
     div.innerHTML="";
 
-    const actions=[
+    const actions=[ ...arguments.callee.actions || [] ];
+
+    // FIX: giữ nguyên actions gốc
+    const realActions = [
         {
             text:"📚 Học",
             action:()=>{
@@ -162,7 +298,7 @@ function renderButtons(){
         }
     ];
 
-    actions.forEach(a=>{
+    realActions.forEach(a=>{
         let btn=document.createElement("button");
         btn.innerText=a.text;
         btn.onclick=()=>next(a.action);
@@ -170,7 +306,7 @@ function renderButtons(){
     });
 }
 
-/* END GAME */
+/* END */
 function endGame(text){
     gameOver=true;
     updateUI(text);
@@ -178,7 +314,6 @@ function endGame(text){
         '<button onclick="location.reload()">Chơi lại</button>';
 }
 
-/* ENDING */
 function ending(){
     let total=money+savings+investment;
 
@@ -199,3 +334,6 @@ function ending(){
 updateUI();
 renderButtons();
 </script>
+
+</body>
+</html>
