@@ -171,17 +171,27 @@ function heartEffect(){
 
 /* DRAMA */
 function randomDrama(){
-    let events=[
-        "💔 trở thành con trâu có sừng dài nhất thế giới",
-        "🎁 Trúng thưởng-may mắn đến",
-        "😷 Bệnh tật",
-        "🔥 +1 nhát dao từ đồng nghiệp"
-    ];
+    let events = [];
 
-    let e=events[Math.floor(Math.random()*events.length)];
+    // luôn có thể xảy ra
+    events.push("🎁 Trúng thưởng-may mắn đến");
+    events.push("😷 Bệnh tật");
 
-    if(e.includes("Trúng")) money+=2000;
-    if(e.includes("Bệnh")) money-=500;
+    // chỉ khi có người yêu
+    if(lover){
+        events.push("💔 Bị cắm sừng");
+    }
+
+    // chỉ khi có việc làm
+    if(job !== "Ăn bám bố mẹ"){
+        events.push("🔥 +1 nhát dao từ đồng nghiệp");
+    }
+
+    let e = events[Math.floor(Math.random()*events.length)];
+
+    // hiệu ứng
+    if(e.includes("Trúng")) money += 2000;
+    if(e.includes("Bệnh")) money -= 500;
 
     return e;
 }
