@@ -2,44 +2,84 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Game Cuộc Đời Tài Chính</title>
+<title>Game Xuyên Không</title>
+
 <style>
-    body {
-        font-family: Arial;
-        background: #111;
-        color: #fff;
-        text-align: center;
-        padding: 20px;
-    }
-    .box {
-        background: #222;
-        padding: 20px;
-        border-radius: 10px;
-        max-width: 600px;
-        margin: auto;
-    }
-    button {
-        padding: 10px;
-        margin: 5px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    button:hover {
-        opacity: 0.8;
-    }
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    color: #222;
+
+    /* nền galaxy */
+    background: url("https://i.imgur.com/9QZ7z9G.jpg") no-repeat center/cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* bảng chính */
+.panel {
+    width: 420px;
+    background: #cfcfe6;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* tiêu đề */
+h1 {
+    text-align: center;
+    font-weight: 500;
+}
+
+/* drama */
+#drama {
+    text-align: center;
+    font-style: italic;
+    color: #444;
+    min-height: 40px;
+}
+
+/* chỉ số */
+#stats {
+    text-align: left;
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+/* nút */
+.buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+button {
+    background: #d8c6ff;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #c2a8ff;
+}
 </style>
+
 </head>
 
 <body>
 
-<div class="box">
-    <h1>💰 Game Cuộc Đời</h1>
+<div class="panel">
+    <h1>Game Xuyên Không</h1>
 
-    <p id="stats"></p>
-    <p id="story"></p>
+    <div id="drama"></div>
 
-    <div id="choices"></div>
+    <div id="stats"></div>
+
+    <div class="buttons" id="buttons"></div>
 </div>
 
 <script>
@@ -49,68 +89,73 @@ let money = 1000;
 let savings = 0;
 let investment = 0;
 let job = "Thất nghiệp";
-let love = false;
 
-function updateStats() {
-    document.getElementById("stats").innerHTML =
-        `Tuổi: ${age} | IQ: ${iq} | Nghề: ${job} <br>
-         Tiền: ${money}$ | Tiết kiệm: ${savings}$ | Đầu tư: ${investment}$ <br>
-         Người yêu: ${love ? "Có" : "Chưa có"}`;
+let lover = null;
+let cheated = false;
+
+const names = ["Phương Trâm", "Bích Tuyền", "Ngọc Nhi", "Anh Thư", "Bảo Khang"];
+
+function randomLover() {
+    return names[Math.floor(Math.random() * names.length)];
 }
 
-function setStory(text, options) {
-    document.getElementById("story").innerText = text;
-    let choicesDiv = document.getElementById("choices");
-    choicesDiv.innerHTML = "";
+function updateUI(dramaText="") {
+    document.getElementById("drama").innerText = dramaText;
 
-    options.forEach(opt => {
+    document.getElementById("stats").innerHTML = `
+    🎂 Tuổi: ${age} <br>
+    🧠 IQ: ${iq} <br>
+    💼 Nghề: ${job} <br>
+    💰 Tiền: ${money}$ <br>
+    🏦 Tiết kiệm: ${savings}$ <br>
+    📈 Đầu tư: ${investment}$ <br>
+    ❤️ Người yêu: ${lover ? lover : "Chưa có"}
+    `;
+}
+
+function setButtons(list) {
+    let div = document.getElementById("buttons");
+    div.innerHTML = "";
+    list.forEach(b => {
         let btn = document.createElement("button");
-        btn.innerText = opt.text;
-        btn.onclick = opt.action;
-        choicesDiv.appendChild(btn);
+        btn.innerText = b.text;
+        btn.onclick = b.action;
+        div.appendChild(btn);
     });
 }
 
 function nextYear() {
     age++;
 
-    // drama random
+    // drama ngẫu nhiên
     let rand = Math.random();
 
     if (rand < 0.2) {
-        setStory("🔥 Bạn bị lừa đầu tư mất tiền!", [
-            { text: "Tiếp tục", action: () => {
-                investment = Math.max(0, investment - 500);
-                nextYear();
-            }}
-        ]);
-        return;
+        investment = Math.max(0, investment - 500);
+        updateUI("💥 Bạn bị lừa đầu tư!");
+        return mainMenu();
     }
 
-    if (rand < 0.4 && love) {
-        setStory("💔 Người yêu chia tay vì bạn quá bận kiếm tiền!", [
-            { text: "Đau lòng...", action: () => {
-                love = false;
-                nextYear();
-            }}
-        ]);
-        return;
+    if (rand < 0.4 && lover) {
+        cheated = true;
+        lover = null;
+        updateUI("💔 Bạn bị cắm sừng và chia tay!");
+        return mainMenu();
     }
 
-    if (age >= 50) {
-        ending();
-        return;
+    if (age >= 45) {
+        return ending();
     }
 
-    mainEvent();
+    mainMenu();
 }
 
-function mainEvent() {
-    updateStats();
+function mainMenu() {
+    updateUI();
 
-    setStory("Bạn muốn làm gì?", [
+    setButtons([
         {
-            text: "📚 Học tăng IQ",
+            text: "📚 Học",
             action: () => {
                 iq += 5;
                 money -= 200;
@@ -121,12 +166,12 @@ function mainEvent() {
             text: "💼 Đi làm",
             action: () => {
                 job = "Nhân viên";
-                money += 500 + iq;
+                money += 400 + iq;
                 nextYear();
             }
         },
         {
-            text: "🏦 Gửi tiết kiệm",
+            text: "🏦 Tiết kiệm",
             action: () => {
                 savings += 300;
                 money -= 300;
@@ -136,24 +181,26 @@ function mainEvent() {
         {
             text: "📈 Đầu tư",
             action: () => {
-                investment += 500;
                 money -= 500;
                 if (Math.random() > 0.5) {
                     investment += 1000;
+                } else {
+                    investment += 200;
                 }
                 nextYear();
             }
         },
         {
-            text: "❤️ Tìm người yêu",
+            text: "❤️ Hẹn hò",
             action: () => {
-                if (!love && Math.random() > 0.5) {
-                    love = true;
-                    alert("Bạn đã có người yêu!");
+                if (!lover) {
+                    lover = randomLover();
+                    cheated = false;
+                    updateUI("💘 Bạn bắt đầu hẹn hò với " + lover);
                 } else {
-                    alert("Thất bại...");
+                    updateUI("💑 Bạn đang yêu " + lover);
                 }
-                nextYear();
+                mainMenu();
             }
         }
     ]);
@@ -161,28 +208,35 @@ function mainEvent() {
 
 function ending() {
     let total = money + savings + investment;
+    let end = "";
 
-    let result = "";
-
-    if (total > 20000 && love) {
-        result = "🏆 KẾT THÚC TỐT: Giàu có và hạnh phúc bên người yêu!";
+    if (total > 30000 && lover) {
+        end = "🏆 Kết thúc hoàn hảo: Giàu có + tình yêu!";
     }
-    else if (total > 20000) {
-        result = "💰 KẾT THÚC: Bạn rất giàu nhưng cô đơn.";
+    else if (total > 30000) {
+        end = "💰 Kết thúc: Tỷ phú cô đơn.";
     }
-    else if (love) {
-        result = "❤️ KẾT THÚC: Nghèo nhưng có tình yêu.";
+    else if (lover && cheated) {
+        end = "💔 Kết thúc drama: Yêu nhưng toàn bị phản bội.";
+    }
+    else if (lover) {
+        end = "❤️ Kết thúc: Bình thường nhưng hạnh phúc.";
     }
     else {
-        result = "😢 KẾT THÚC TỆ: Nghèo và cô đơn.";
+        end = "😢 Kết thúc tệ: Nghèo và cô đơn.";
     }
 
-    document.getElementById("story").innerText = result;
-    document.getElementById("choices").innerHTML =
-        `<button onclick="location.reload()">Chơi lại</button>`;
+    updateUI(end);
+
+    setButtons([
+        {
+            text: "🔄 Chơi lại",
+            action: () => location.reload()
+        }
+    ]);
 }
 
-mainEvent();
+mainMenu();
 </script>
 
 </body>
