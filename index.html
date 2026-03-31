@@ -7,8 +7,8 @@
 <style>
 body {
     margin: 0;
-    font-family: "Segoe UI", sans-serif;
-    background: url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564") no-repeat center/cover;
+    font-family: sans-serif;
+    background: url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564") center/cover;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -18,23 +18,35 @@ body {
 /* panel */
 .panel {
     width: 420px;
-    background: #d6d6eb;
+    background: #dcdcf5;
     padding: 20px;
     border-radius: 20px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.6);
     text-align: center;
 }
 
-h1 {
+/* status chạy */
+#status {
+    height: 25px;
+    overflow: hidden;
+    font-size: 14px;
     margin-bottom: 10px;
+}
+
+.statusText {
+    animation: slide 2.5s linear;
+}
+
+@keyframes slide {
+    0% { transform: translateY(20px); opacity: 0 }
+    20% { opacity: 1 }
+    80% { opacity: 1 }
+    100% { transform: translateY(-20px); opacity: 0 }
 }
 
 /* drama */
 #drama {
     font-style: italic;
-    color: #444;
-    min-height: 30px;
-    margin-bottom: 10px;
+    height: 30px;
 }
 
 /* stats */
@@ -44,10 +56,6 @@ h1 {
 }
 
 /* buttons */
-.buttons {
-    margin-top: 20px;
-}
-
 button {
     background: #cbb7ff;
     border: none;
@@ -57,47 +65,37 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    background: #b39aff;
-}
-
-/* intro */
-#intro { display: block; }
-#game { display: none; }
-
 /* EFFECT */
 #effect {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
 }
 
-/* money */
-.floating {
+/* tiền */
+.money {
     position: absolute;
-    font-size: 24px;
-    animation: floatUp 1s ease-out forwards;
+    font-size: 40px;
+    animation: moneyFly 2.5s ease-out forwards;
 }
 
-@keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+@keyframes moneyFly {
+    0% { transform: scale(1) translateY(0); opacity: 1 }
+    100% { transform: scale(2) translateY(-150px); opacity: 0 }
 }
 
-/* heart */
+/* tim */
 .heart {
     position: absolute;
-    font-size: 30px;
-    animation: heartPop 1s ease-out forwards;
+    font-size: 60px;
+    animation: heartBoom 2.5s ease-out forwards;
 }
 
-@keyframes heartPop {
-    0% { opacity: 1; transform: scale(0.5); }
-    50% { transform: scale(1.5); }
-    100% { opacity: 0; transform: scale(1); }
+@keyframes heartBoom {
+    0% { transform: scale(0.5); opacity: 1 }
+    50% { transform: scale(2) }
+    100% { transform: scale(1.2); opacity: 0 }
 }
 </style>
 
@@ -105,28 +103,17 @@ button:hover {
 
 <body>
 
-<!-- INTRO -->
-<div class="panel" id="intro">
-    <h1>Game Xuyên Không</h1>
-    <p>
-        Một ngày nọ bạn bị xuyên không...<br><br>
-        Bạn phải xây dựng cuộc đời từ con số 0<br>
-        Tiền bạc - Tình yêu - Sự nghiệp<br><br>
-        Nhưng hãy cẩn thận...<br>
-        Cuộc đời này đầy drama 💔
-    </p>
-    <button onclick="startGame()">✨ Xuyên không</button>
-</div>
+<div class="panel">
+    <h2>Game Xuyên Không</h2>
 
-<!-- GAME -->
-<div class="panel" id="game">
-    <h1>Game Xuyên Không</h1>
+    <div id="status"></div>
     <div id="drama"></div>
+
     <div id="stats"></div>
-    <div class="buttons" id="buttons"></div>
+
+    <div id="buttons"></div>
 </div>
 
-<!-- EFFECT -->
 <div id="effect"></div>
 
 <script>
@@ -138,198 +125,167 @@ let investment = 0;
 let job = "Thất nghiệp";
 
 let lover = null;
-let cheated = false;
 
-const names = ["Phương Trâm", "Bích Tuyền", "Ngọc Nhi", "Anh Thư", "Bảo Khang"];
+const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo Khang"];
 
-/* START */
-function startGame() {
-    document.getElementById("intro").style.display = "none";
-    document.getElementById("game").style.display = "block";
-    mainMenu();
-}
-
-/* EFFECT MONEY */
-function showMoneyEffect() {
-    let container = document.getElementById("effect");
-
-    for (let i = 0; i < 6; i++) {
-        let el = document.createElement("div");
-        el.className = "floating";
-        el.innerText = "💸";
-
-        el.style.left = (50 + (Math.random()*40 - 20)) + "%";
-        el.style.top = "60%";
-
-        container.appendChild(el);
-        setTimeout(() => el.remove(), 1000);
-    }
-}
-
-/* EFFECT HEART */
-function showHeartEffect() {
-    let container = document.getElementById("effect");
-
+/* STATUS */
+function showStatus(text) {
+    let div = document.getElementById("status");
     let el = document.createElement("div");
-    el.className = "heart";
-    el.innerText = "❤️";
+    el.className = "statusText";
+    el.innerText = text;
 
-    el.style.left = "50%";
-    el.style.top = "50%";
-    el.style.transform = "translate(-50%, -50%)";
-
-    container.appendChild(el);
-    setTimeout(() => el.remove(), 1000);
+    div.innerHTML = "";
+    div.appendChild(el);
 }
 
-/* RANDOM LOVER */
-function randomLover() {
-    return names[Math.floor(Math.random() * names.length)];
+/* EFFECT */
+function moneyEffect() {
+    let e = document.createElement("div");
+    e.className = "money";
+    e.innerText = "💸";
+    e.style.left = "50%";
+    e.style.top = "60%";
+    document.getElementById("effect").appendChild(e);
+    setTimeout(()=>e.remove(),2500);
+}
+
+function heartEffect() {
+    let e = document.createElement("div");
+    e.className = "heart";
+    e.innerText = "❤️";
+    e.style.left = "50%";
+    e.style.top = "50%";
+    document.getElementById("effect").appendChild(e);
+    setTimeout(()=>e.remove(),2500);
 }
 
 /* UI */
-function updateUI(dramaText="") {
-    document.getElementById("drama").innerText = dramaText;
+function updateUI(drama="") {
+    document.getElementById("drama").innerText = drama;
 
     document.getElementById("stats").innerHTML = `
-    🎂 Tuổi: ${age} <br>
-    🧠 IQ: ${iq} <br>
-    💼 Nghề: ${job} <br>
-    💰 Tiền: ${money}$ <br>
-    🏦 Tiết kiệm: ${savings}$ <br>
-    📈 Đầu tư: ${investment}$ <br>
-    ❤️ Người yêu: ${lover ? lover : "Chưa có"}
+    🎂 ${age} tuổi<br>
+    🧠 IQ: ${iq}<br>
+    💼 ${job}<br>
+    💰 ${money}$<br>
+    🏦 ${savings}$<br>
+    📈 ${investment}$<br>
+    ❤️ ${lover ? lover : "Chưa có"}
     `;
 }
 
 /* BUTTON */
-function setButtons(list) {
+function setButtons(arr) {
     let div = document.getElementById("buttons");
     div.innerHTML = "";
 
-    list.forEach(b => {
-        let btn = document.createElement("button");
-        btn.innerText = b.text;
-        btn.onclick = b.action;
+    arr.forEach(b=>{
+        let btn=document.createElement("button");
+        btn.innerText=b.text;
+        btn.onclick=b.action;
         div.appendChild(btn);
     });
 }
 
-/* NEXT YEAR */
-function nextYear() {
-    age++;
-
-    let rand = Math.random();
-
-    if (rand < 0.2) {
-        investment = Math.max(0, investment - 500);
-        showMoneyEffect();
-        updateUI("💥 Bạn bị lừa đầu tư!");
-        return mainMenu();
-    }
-
-    if (rand < 0.4 && lover) {
-        cheated = true;
-        lover = null;
-        updateUI("💔 Bạn bị cắm sừng!");
-        return mainMenu();
-    }
-
-    if (age >= 45) {
-        return ending();
-    }
-
-    mainMenu();
+/* tuổi random */
+function growAge() {
+    age += Math.floor(Math.random()*4)+2; // 2-5
 }
 
-/* MENU */
-function mainMenu() {
+/* MAIN */
+function game() {
     updateUI();
 
     setButtons([
         {
-            text: "📚 Học",
-            action: () => {
-                iq += 5;
-                money -= 200;
-                nextYear();
+            text:"📚 Học",
+            action:()=>{
+                iq+=5;
+                money-=200;
+                growAge();
+                showStatus("📚 Bạn đang học chăm chỉ");
+                game();
             }
         },
         {
-            text: "💼 Đi làm",
-            action: () => {
-                job = "Nhân viên";
-                money += 400 + iq;
-                nextYear();
+            text:"💼 Làm",
+            action:()=>{
+                job="Nhân viên";
+                money+=400+iq;
+                growAge();
+                showStatus("💼 Bạn đi làm kiếm tiền");
+                game();
             }
         },
         {
-            text: "🏦 Tiết kiệm",
-            action: () => {
-                savings += 300;
-                money -= 300;
-                nextYear();
+            text:"🏦 Tiết kiệm",
+            action:()=>{
+                savings+=300;
+                money-=300;
+                growAge();
+                showStatus("🏦 Bạn đang tiết kiệm");
+                game();
             }
         },
         {
-            text: "📈 Đầu tư",
-            action: () => {
-                money -= 500;
-                if (Math.random() > 0.5) {
-                    investment += 1000;
-                } else {
-                    investment += 200;
+            text:"📈 Đầu tư",
+            action:()=>{
+                money-=500;
+                growAge();
+
+                if(Math.random()>0.5){
+                    investment+=1200;
+                    showStatus("💰 Bạn đầu tư thắng lớn!");
+                }else{
+                    investment+=200;
+                    moneyEffect();
+                    showStatus("💸 Đầu tư thất bại!");
                 }
-                nextYear();
+                game();
             }
         },
         {
-            text: "❤️ Hẹn hò",
-            action: () => {
-                if (!lover) {
-                    lover = randomLover();
-                    cheated = false;
-                    showHeartEffect();
-                    updateUI("💘 Bạn đang yêu " + lover);
-                } else {
-                    updateUI("💑 Bạn vẫn đang yêu " + lover);
+            text:"❤️ Hẹn hò",
+            action:()=>{
+                growAge();
+
+                if(!lover){
+                    lover=names[Math.floor(Math.random()*names.length)];
+                    heartEffect();
+                    showStatus("😊 Bạn đang hẹn hò với "+lover);
+                }else{
+                    showStatus("❤️ Bạn vẫn yêu "+lover);
                 }
-                mainMenu();
+                game();
             }
         }
     ]);
+
+    if(age>=45) ending();
 }
 
-/* ENDING */
-function ending() {
-    let total = money + savings + investment;
-    let end = "";
+/* END */
+function ending(){
+    let total=money+savings+investment;
+    let text="";
 
-    if (total > 30000 && lover) {
-        end = "🏆 Happy Ending: Giàu + tình yêu!";
-    }
-    else if (total > 30000) {
-        end = "💰 Tỷ phú cô đơn.";
-    }
-    else if (lover && cheated) {
-        end = "💔 Drama Ending: Bị phản bội.";
-    }
-    else if (lover) {
-        end = "❤️ Bình yên bên người yêu.";
-    }
-    else {
-        end = "😢 Trắng tay.";
+    if(total>30000 && lover){
+        text="🏆 Viên mãn";
+    }else if(total>30000){
+        text="💰 Giàu nhưng cô đơn";
+    }else if(lover){
+        text="❤️ Bình yên";
+    }else{
+        text="😢 Thất bại";
     }
 
-    updateUI(end);
-
-    setButtons([
-        {
-            text: "🔄 Chơi lại",
-            action: () => location.reload()
-        }
-    ]);
+    updateUI(text);
+    document.getElementById("buttons").innerHTML=
+        '<button onclick="location.reload()">Chơi lại</button>';
 }
+
+game();
 </script>
 
 </body>
