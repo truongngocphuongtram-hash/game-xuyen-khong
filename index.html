@@ -331,21 +331,54 @@ function endGame(text){
 }
 
 function ending(){
-    let total=money+savings+investment;
+    let total = money + savings + investment;
 
-    let endings=[];
+    let endings = {
+        richLove: [
+            "👑 Vua xuyên không - tiền không thiếu tình không vơi",
+            "💎 Đại gia và em hàng ngon ghẻ",
+            "🏆 Cuộc đời viên mãn level max"
+        ],
+        richSolo: [
+            "💰 Fuba cô độc-đếm tiền mỗi tay, ko ai nắm tay",
+            "😎 Giàu nhưng không ai yêu",
+            "🏦 Chủ tịch nhưng thích ngủ 1 mình như HIEUTHUHAI"
+        ],
+        midLove: [
+            "💖 Đời không plot twist",
+            "😊 Sống ổn định với tình yêu",
+            "🌸 Bình yên bên người thương"
+        ],
+        midSolo: [
+            "😐 Bình bình sống qua ngày",
+            "🐱 Sống với 50 con mèo không còn j hơn",
+            "🧍‍♂️ Một mình nhưng ổn"
+        ],
+        poorLove: [
+            "❤️ Mụt túp lều tranh hai trái tim vàng",
+            "🥰 Nghèo nhưng hạnh phúc",
+            "💑 Tình yêu vượt khó"
+        ],
+        poorSolo: [
+            "😢 Thất bại toàn tập-chơi dở vại má",
+            "💀 Đã nghèo còn cô đơn-gà vl",
+            "🪦 Game over cuộc đời-trùng sinh mãn kiếp"
+        ]
+    };
 
-    if(total>50000 && lover) endings.push("👑 Vua xuyên không - tiền không thiếu tình không vơi");
-    if(total>50000 && !lover) endings.push("💰 Fuba cô độc-đếm tiền mỏi tay, không ai nắm tay");
-    if(total>20000 && lover) endings.push("💖 Đời không plot twist");
-    if(total>20000 && !lover) endings.push("😐 Bình bình sống với 50 con mèo cuối đời");
-    if(total<10000 && lover) endings.push("❤️ Mụt túp lều tranh hai trái tim vàng");
-    if(total<10000 && !lover) endings.push("😢 Thất bại toàn tập-chơi j ngu vại");
+    let pool = [];
 
-    let result=endings[Math.floor(Math.random()*endings.length)];
+    if(total > 50000 && lover) pool = endings.richLove;
+    else if(total > 50000 && !lover) pool = endings.richSolo;
+    else if(total > 20000 && lover) pool = endings.midLove;
+    else if(total > 20000 && !lover) pool = endings.midSolo;
+    else if(total <= 10000 && lover) pool = endings.poorLove;
+    else pool = endings.poorSolo;
+
+    let result = pool[Math.floor(Math.random() * pool.length)];
+
     endGame(result);
 }
-
 /* INIT */
 updateUI();
 renderButtons();
