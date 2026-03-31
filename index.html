@@ -1,132 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Game Xuyên Không</title>
-
-<style>
-body {
-    margin: 0;
-    font-family: sans-serif;
-    background: url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564") center/cover;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.panel {
-    width: 420px;
-    background: #dcdcf5;
-    padding: 20px;
-    border-radius: 20px;
-    text-align: center;
-}
-
-#intro { display: block; }
-#game { display: none; }
-
-#status {
-    height: 25px;
-    overflow: hidden;
-    position: relative;
-}
-
-.statusText {
-    position: absolute;
-    width: 100%;
-    animation: slide 2.5s linear;
-}
-
-@keyframes slide {
-    0% { transform: translateY(20px); opacity: 0 }
-    20% { opacity: 1 }
-    80% { opacity: 1 }
-    100% { transform: translateY(-20px); opacity: 0 }
-}
-
-#drama {
-    font-style: italic;
-    height: 25px;
-}
-
-#stats {
-    text-align: left;
-}
-
-button {
-    background: #cbb7ff;
-    border: none;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-#effect {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.money {
-    position: absolute;
-    left: 50%;
-    top: 60%;
-    transform: translate(-50%, -50%);
-    font-size: 50px;
-    animation: moneyFly 2.5s ease-out forwards;
-}
-
-@keyframes moneyFly {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 1 }
-    100% { transform: translate(-50%, -200px) scale(2); opacity: 0 }
-}
-
-.heart {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 70px;
-    animation: heartBoom 2.5s ease-out forwards;
-}
-
-@keyframes heartBoom {
-    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1 }
-    50% { transform: translate(-50%, -50%) scale(2) }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0 }
-}
-</style>
-</head>
-
-<body>
-
-<div class="panel" id="intro">
-    <h2>Game Xuyên Không</h2>
-    <p>
-        Bạn xuyên không sang thế giới khác...<br><br>
-        Bắt đầu lại mọi thứ từ con số 0 🌀<br>
-        Tiền bạc - tình yêu - drama đang chờ đón bạn 💔<br><br>
-        Liệu bạn sẽ trở thành ai?
-    </p>
-    <button onclick="startGame()">✨ Xuyên không</button>
-</div>
-
-<div class="panel" id="game">
-    <h2>Game Xuyên Không</h2>
-    <div id="status"></div>
-    <div id="drama"></div>
-    <div id="stats"></div>
-    <div id="buttons"></div>
-</div>
-
-<div id="effect"></div>
-
 <script>
 let age = 18;
-let iq = 50;
+let iq = 70;
 let money = 1000;
 let savings = 0;
 let investment = 0;
@@ -138,8 +12,9 @@ const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo K
 
 /* START */
 function startGame(){
-    intro.style.display="none";
-    game.style.display="block";
+    document.getElementById("intro").style.display="none";
+    document.getElementById("game").style.display="block";
+    updateUI(); // thêm để cập nhật UI ngay
 }
 
 /* STATUS */
@@ -147,7 +22,7 @@ function showStatus(text){
     let el=document.createElement("div");
     el.className="statusText";
     el.innerText=text;
-    status.appendChild(el);
+    document.getElementById("status").appendChild(el);
     setTimeout(()=>el.remove(),2500);
 }
 
@@ -156,7 +31,7 @@ function moneyEffect(){
     let e=document.createElement("div");
     e.className="money";
     e.innerText="💸";
-    effect.appendChild(e);
+    document.getElementById("effect").appendChild(e);
     setTimeout(()=>e.remove(),2500);
 }
 
@@ -164,17 +39,17 @@ function heartEffect(){
     let e=document.createElement("div");
     e.className="heart";
     e.innerText="❤️";
-    effect.appendChild(e);
+    document.getElementById("effect").appendChild(e);
     setTimeout(()=>e.remove(),2500);
 }
 
 /* DRAMA RANDOM */
 function randomDrama(){
     let events=[
-        "💔 trở thành con trâu sừng dài nhất thế giới",
+        "💔 trở thành con trâu có sừng dài nhất thế giới",
         "🎁 Trúng thưởng-may mắn đến",
         "😷 Bệnh tật",
-        "🔥 nhát dao từ đồng nghiệp"
+        "🔥 +1 nhát dao từ đồng nghiệp"
     ];
 
     let e=events[Math.floor(Math.random()*events.length)];
@@ -189,7 +64,7 @@ function randomDrama(){
 function updateUI(drama=""){
     document.getElementById("drama").innerText=drama;
 
-    stats.innerHTML=`
+    document.getElementById("stats").innerHTML=`
     🎂 ${age} tuổi<br>
     🧠 ${iq}<br>
     💼 ${job}<br>
@@ -229,7 +104,8 @@ function next(action){
 
 /* BUTTON */
 function renderButtons(){
-    buttons.innerHTML="";
+    let div = document.getElementById("buttons");
+    div.innerHTML="";
 
     const actions=[
         {
@@ -237,7 +113,7 @@ function renderButtons(){
             action:()=>{
                 iq+=5;
                 money-=200;
-                showStatus("📚 Đang trong ngôi trg hạnh phúc");
+                showStatus("📚 Đang trog ngôi trg hạnh phúc");
             }
         },
         {
@@ -245,9 +121,9 @@ function renderButtons(){
             action:()=>{
                 money+=400+iq;
                 if(iq>180) job="🧠 Thiên tài";
-                else if(iq>140) job="💻 Lập trình viên";
+                else if(iq>140) job="💻 Lập trình viên-dân IT";
                 else job="👷 Công nhân";
-                showStatus("💼 Làm trâu làm ngựa");
+                showStatus("💼 Làm trâu làm ngụa");
             }
         },
         {
@@ -255,7 +131,7 @@ function renderButtons(){
             action:()=>{
                 savings+=300;
                 money-=300;
-                showStatus("🏦 Gửi tư bản");
+                showStatus("🏦 Gửi nhà bank");
             }
         },
         {
@@ -268,7 +144,7 @@ function renderButtons(){
                 }else{
                     investment-=300;
                     moneyEffect();
-                    showStatus("💸 Lỗ nặng rùi cưng!");
+                    showStatus("💸 Lỗ!");
                 }
             }
         },
@@ -278,7 +154,7 @@ function renderButtons(){
                 if(!lover){
                     lover=names[Math.floor(Math.random()*names.length)];
                     heartEffect();
-                    showStatus("😊 Có người yêu");
+                    showStatus("😊 Chính thức hết độc thân");
                 }else{
                     showStatus("❤️ Đang yêu "+lover);
                 }
@@ -290,7 +166,7 @@ function renderButtons(){
         let btn=document.createElement("button");
         btn.innerText=a.text;
         btn.onclick=()=>next(a.action);
-        buttons.appendChild(btn);
+        div.appendChild(btn);
     });
 }
 
@@ -298,10 +174,11 @@ function renderButtons(){
 function endGame(text){
     gameOver=true;
     updateUI(text);
-    buttons.innerHTML='<button onclick="location.reload()">Chơi lại</button>';
+    document.getElementById("buttons").innerHTML =
+        '<button onclick="location.reload()">Chơi lại</button>';
 }
 
-/* ENDING - ĐA DẠNG */
+/* ENDING */
 function ending(){
     let total=money+savings+investment;
 
@@ -310,13 +187,11 @@ function ending(){
     if(total>50000 && lover) endings.push("👑 Vua xuyên không - tiền không thiếu tình không vơi");
     if(total>50000 && !lover) endings.push("💰 Fuba cô độc-đếm tiền mỏi tay, không ai nắm tay");
     if(total>20000 && lover) endings.push("💖 Đời không plot twist");
-    if(total>20000 && !lover) endings.push("😐 Bình bình đến cuối đời");
+    if(total>20000 && !lover) endings.push("😐 Bình bình sống với 50 con mèo cuối đời");
     if(total<10000 && lover) endings.push("❤️ Mụt túp lều tranh hai trái tim vàng");
-    if(total<10000 && !lover) endings.push("😢 Thất bại toàn tập-chơi gì ngu vại bạn");
+    if(total<10000 && !lover) endings.push("😢 Thất bại toàn tập-chơi j ngu vại");
 
-    // random trong các kết hợp phù hợp
     let result=endings[Math.floor(Math.random()*endings.length)];
-
     endGame(result);
 }
 
@@ -324,6 +199,3 @@ function ending(){
 updateUI();
 renderButtons();
 </script>
-
-</body>
-</html>
