@@ -15,7 +15,6 @@ body {
     align-items: center;
 }
 
-/* panel */
 .panel {
     width: 420px;
     background: #dcdcf5;
@@ -24,11 +23,9 @@ body {
     text-align: center;
 }
 
-/* intro */
 #intro { display: block; }
 #game { display: none; }
 
-/* status */
 #status {
     height: 25px;
     overflow: hidden;
@@ -48,18 +45,15 @@ body {
     100% { transform: translateY(-20px); opacity: 0 }
 }
 
-/* drama */
 #drama {
     font-style: italic;
     height: 25px;
 }
 
-/* stats */
 #stats {
     text-align: left;
 }
 
-/* button */
 button {
     background: #cbb7ff;
     border: none;
@@ -69,7 +63,6 @@ button {
     cursor: pointer;
 }
 
-/* effect */
 #effect {
     position: fixed;
     width: 100%;
@@ -77,7 +70,6 @@ button {
     pointer-events: none;
 }
 
-/* money */
 .money {
     position: absolute;
     left: 50%;
@@ -92,7 +84,6 @@ button {
     100% { transform: translate(-50%, -200px) scale(2); opacity: 0 }
 }
 
-/* heart */
 .heart {
     position: absolute;
     left: 50%;
@@ -112,19 +103,17 @@ button {
 
 <body>
 
-<!-- INTRO -->
 <div class="panel" id="intro">
     <h2>Game Xuyên Không</h2>
     <p>
-        Một ngày nọ bạn bị kéo vào thế giới khác...<br><br>
-        Bạn phải sống lại cuộc đời từ con số 0<br>
-        Với tiền bạc, tình yêu và drama cuộc đời đang chào đón💔<br><br>
+        Bạn xuyên không sang thế giới khác...<br><br>
+        Bắt đầu lại mọi thứ từ con số 0 🌀<br>
+        Tiền bạc - tình yêu - drama đang chờ đón bạn 💔<br><br>
         Liệu bạn sẽ trở thành ai?
     </p>
     <button onclick="startGame()">✨ Xuyên không</button>
 </div>
 
-<!-- GAME -->
 <div class="panel" id="game">
     <h2>Game Xuyên Không</h2>
     <div id="status"></div>
@@ -137,11 +126,11 @@ button {
 
 <script>
 let age = 18;
-let iq = 100;
+let iq = 50;
 let money = 1000;
 let savings = 0;
 let investment = 0;
-let job = "ăn bám bố mẹ";
+let job = "Ăn bám bố mẹ";
 let lover = null;
 let gameOver = false;
 
@@ -149,17 +138,16 @@ const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo K
 
 /* START */
 function startGame(){
-    document.getElementById("intro").style.display="none";
-    document.getElementById("game").style.display="block";
+    intro.style.display="none";
+    game.style.display="block";
 }
 
 /* STATUS */
 function showStatus(text){
-    let div=document.getElementById("status");
     let el=document.createElement("div");
     el.className="statusText";
     el.innerText=text;
-    div.appendChild(el);
+    status.appendChild(el);
     setTimeout(()=>el.remove(),2500);
 }
 
@@ -168,7 +156,7 @@ function moneyEffect(){
     let e=document.createElement("div");
     e.className="money";
     e.innerText="💸";
-    document.getElementById("effect").appendChild(e);
+    effect.appendChild(e);
     setTimeout(()=>e.remove(),2500);
 }
 
@@ -176,15 +164,32 @@ function heartEffect(){
     let e=document.createElement("div");
     e.className="heart";
     e.innerText="❤️";
-    document.getElementById("effect").appendChild(e);
+    effect.appendChild(e);
     setTimeout(()=>e.remove(),2500);
+}
+
+/* DRAMA RANDOM */
+function randomDrama(){
+    let events=[
+        "💔 trở thành con trâu sừng dài nhất thế giới",
+        "🎁 Trúng thưởng-may mắn đến",
+        "😷 Bệnh tật",
+        "🔥 nhát dao từ đồng nghiệp"
+    ];
+
+    let e=events[Math.floor(Math.random()*events.length)];
+
+    if(e.includes("Trúng")) money+=2000;
+    if(e.includes("Bệnh")) money-=500;
+
+    return e;
 }
 
 /* UI */
 function updateUI(drama=""){
     document.getElementById("drama").innerText=drama;
 
-    document.getElementById("stats").innerHTML=`
+    stats.innerHTML=`
     🎂 ${age} tuổi<br>
     🧠 ${iq}<br>
     💼 ${job}<br>
@@ -192,6 +197,7 @@ function updateUI(drama=""){
     🏦 ${savings}$<br>
     📈 ${investment}$<br>
     ❤️ ${lover ? lover : "Sói hoang cô độc"}
+    <br><progress value="${age}" max="45"></progress>
     `;
 }
 
@@ -205,15 +211,25 @@ function next(action){
     if(gameOver) return;
 
     action();
-    updateUI();
+    growAge();
 
-    if(age>=45) ending();
+    let drama=randomDrama();
+    updateUI(drama);
+    renderButtons();
+
+    if(money<0){
+        endGame("💀 Phá sản");
+        return;
+    }
+
+    if(age>=45){
+        ending();
+    }
 }
 
 /* BUTTON */
 function renderButtons(){
-    let div=document.getElementById("buttons");
-    div.innerHTML="";
+    buttons.innerHTML="";
 
     const actions=[
         {
@@ -221,17 +237,17 @@ function renderButtons(){
             action:()=>{
                 iq+=5;
                 money-=200;
-                growAge();
-                showStatus("📚 Bạn đang trong ngôi trường hạnh phúc");
+                showStatus("📚 Đang trong ngôi trg hạnh phúc");
             }
         },
         {
             text:"💼 Làm",
             action:()=>{
-                job="Đời công nhân";
                 money+=400+iq;
-                growAge();
-                showStatus("💼 Bạn đi làm trâu ngựa");
+                if(iq>180) job="🧠 Thiên tài";
+                else if(iq>140) job="💻 Lập trình viên";
+                else job="👷 Công nhân";
+                showStatus("💼 Làm trâu làm ngựa");
             }
         },
         {
@@ -239,35 +255,30 @@ function renderButtons(){
             action:()=>{
                 savings+=300;
                 money-=300;
-                growAge();
-                showStatus("🏦 đã cống tiền cho ngân hàng");
+                showStatus("🏦 Gửi tư bản");
             }
         },
         {
             text:"📈 Đầu tư",
             action:()=>{
                 money-=500;
-                growAge();
-
                 if(Math.random()>0.5){
-                    investment+=1200;
-                    showStatus("💰 Thắng lớn!");
+                    investment+=1500;
+                    showStatus("💰 Lãi lớn!");
                 }else{
-                    investment+=200;
+                    investment-=300;
                     moneyEffect();
-                    showStatus("💸 Thua lỗ!");
+                    showStatus("💸 Lỗ nặng rùi cưng!");
                 }
             }
         },
         {
             text:"❤️ Hẹn hò",
             action:()=>{
-                growAge();
-
                 if(!lover){
                     lover=names[Math.floor(Math.random()*names.length)];
                     heartEffect();
-                    showStatus("😊 Hẹn hò với "+lover);
+                    showStatus("😊 Có người yêu");
                 }else{
                     showStatus("❤️ Đang yêu "+lover);
                 }
@@ -278,31 +289,35 @@ function renderButtons(){
     actions.forEach(a=>{
         let btn=document.createElement("button");
         btn.innerText=a.text;
-        btn.onclick=()=> next(a.action);
-        div.appendChild(btn);
+        btn.onclick=()=>next(a.action);
+        buttons.appendChild(btn);
     });
 }
 
-/* END */
-function ending(){
+/* END GAME */
+function endGame(text){
     gameOver=true;
-
-    let total=money+savings+investment;
-    let text="";
-
-    if(total>30000 && lover){
-        text="🏆 Viên mãn-tiền không thiếu tình không vơi";
-    }else if(total>30000){
-        text="💰 fuba cô độc-đếm tiền mỏi tay không ai nắm tay";
-    }else if(lover){
-        text="❤️ đời không plot twist";
-    }else{
-        text="😢 Thất bại-chơi gì ngu vại bạn";
-    }
-
     updateUI(text);
-    document.getElementById("buttons").innerHTML=
-        '<button onclick="location.reload()">Chơi lại</button>';
+    buttons.innerHTML='<button onclick="location.reload()">Chơi lại</button>';
+}
+
+/* ENDING - ĐA DẠNG */
+function ending(){
+    let total=money+savings+investment;
+
+    let endings=[];
+
+    if(total>50000 && lover) endings.push("👑 Vua xuyên không - tiền không thiếu tình không vơi");
+    if(total>50000 && !lover) endings.push("💰 Fuba cô độc-đếm tiền mỏi tay, không ai nắm tay");
+    if(total>20000 && lover) endings.push("💖 Đời không plot twist");
+    if(total>20000 && !lover) endings.push("😐 Bình bình đến cuối đời");
+    if(total<10000 && lover) endings.push("❤️ Mụt túp lều tranh hai trái tim vàng");
+    if(total<10000 && !lover) endings.push("😢 Thất bại toàn tập-chơi gì ngu vại bạn");
+
+    // random trong các kết hợp phù hợp
+    let result=endings[Math.floor(Math.random()*endings.length)];
+
+    endGame(result);
 }
 
 /* INIT */
