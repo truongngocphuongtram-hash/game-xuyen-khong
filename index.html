@@ -24,15 +24,16 @@ body {
     text-align: center;
 }
 
-/* status chạy */
+/* STATUS */
 #status {
     height: 25px;
     overflow: hidden;
-    font-size: 14px;
-    margin-bottom: 10px;
+    position: relative;
 }
 
 .statusText {
+    position: absolute;
+    width: 100%;
     animation: slide 2.5s linear;
 }
 
@@ -46,13 +47,12 @@ body {
 /* drama */
 #drama {
     font-style: italic;
-    height: 30px;
+    height: 25px;
 }
 
 /* stats */
 #stats {
     text-align: left;
-    line-height: 1.6;
 }
 
 /* buttons */
@@ -73,32 +73,37 @@ button {
     pointer-events: none;
 }
 
-/* tiền */
+/* MONEY */
 .money {
     position: absolute;
-    font-size: 40px;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
     animation: moneyFly 2.5s ease-out forwards;
 }
 
 @keyframes moneyFly {
-    0% { transform: scale(1) translateY(0); opacity: 1 }
-    100% { transform: scale(2) translateY(-150px); opacity: 0 }
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1 }
+    100% { transform: translate(-50%, -200px) scale(2); opacity: 0 }
 }
 
-/* tim */
+/* HEART */
 .heart {
     position: absolute;
-    font-size: 60px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 70px;
     animation: heartBoom 2.5s ease-out forwards;
 }
 
 @keyframes heartBoom {
-    0% { transform: scale(0.5); opacity: 1 }
-    50% { transform: scale(2) }
-    100% { transform: scale(1.2); opacity: 0 }
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1 }
+    50% { transform: translate(-50%, -50%) scale(2) }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0 }
 }
 </style>
-
 </head>
 
 <body>
@@ -108,9 +113,7 @@ button {
 
     <div id="status"></div>
     <div id="drama"></div>
-
     <div id="stats"></div>
-
     <div id="buttons"></div>
 </div>
 
@@ -123,30 +126,31 @@ let money = 1000;
 let savings = 0;
 let investment = 0;
 let job = "Thất nghiệp";
-
 let lover = null;
+let gameOver = false;
 
 const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo Khang"];
 
-/* STATUS */
+/* STATUS FIX */
 function showStatus(text) {
     let div = document.getElementById("status");
+
     let el = document.createElement("div");
     el.className = "statusText";
     el.innerText = text;
 
-    div.innerHTML = "";
     div.appendChild(el);
+
+    setTimeout(()=> el.remove(), 2500);
 }
 
-/* EFFECT */
+/* EFFECT FIX */
 function moneyEffect() {
     let e = document.createElement("div");
     e.className = "money";
     e.innerText = "💸";
-    e.style.left = "50%";
-    e.style.top = "60%";
     document.getElementById("effect").appendChild(e);
+
     setTimeout(()=>e.remove(),2500);
 }
 
@@ -154,9 +158,8 @@ function heartEffect() {
     let e = document.createElement("div");
     e.className = "heart";
     e.innerText = "❤️";
-    e.style.left = "50%";
-    e.style.top = "50%";
     document.getElementById("effect").appendChild(e);
+
     setTimeout(()=>e.remove(),2500);
 }
 
@@ -166,56 +169,54 @@ function updateUI(drama="") {
 
     document.getElementById("stats").innerHTML = `
     🎂 ${age} tuổi<br>
-    🧠 IQ: ${iq}<br>
+    🧠 ${iq}<br>
     💼 ${job}<br>
     💰 ${money}$<br>
     🏦 ${savings}$<br>
     📈 ${investment}$<br>
-    ❤️ ${lover ? lover : "Chưa có"}
+    ❤️ ${lover ? lover : "sói hoang cô độc"}
     `;
 }
 
+/* AGE FIX */
+function growAge() {
+    age += Math.floor(Math.random()*4)+2;
+}
+
+/* GAME LOOP FIX */
+function next(action) {
+    if(gameOver) return;
+
+    action();
+    updateUI();
+
+    if(age >= 45){
+        return ending();
+    }
+}
+
 /* BUTTON */
-function setButtons(arr) {
+function renderButtons() {
     let div = document.getElementById("buttons");
     div.innerHTML = "";
 
-    arr.forEach(b=>{
-        let btn=document.createElement("button");
-        btn.innerText=b.text;
-        btn.onclick=b.action;
-        div.appendChild(btn);
-    });
-}
-
-/* tuổi random */
-function growAge() {
-    age += Math.floor(Math.random()*4)+2; // 2-5
-}
-
-/* MAIN */
-function game() {
-    updateUI();
-
-    setButtons([
+    const actions = [
         {
             text:"📚 Học",
             action:()=>{
                 iq+=5;
                 money-=200;
                 growAge();
-                showStatus("📚 Bạn đang học chăm chỉ");
-                game();
+                showStatus("📚 Bạn đang học");
             }
         },
         {
             text:"💼 Làm",
             action:()=>{
-                job="Nhân viên";
+                job="Đời công nhân";
                 money+=400+iq;
                 growAge();
-                showStatus("💼 Bạn đi làm kiếm tiền");
-                game();
+                showStatus("💼 Bạn đi làm");
             }
         },
         {
@@ -224,8 +225,7 @@ function game() {
                 savings+=300;
                 money-=300;
                 growAge();
-                showStatus("🏦 Bạn đang tiết kiệm");
-                game();
+                showStatus("🏦 Bạn tiết kiệm");
             }
         },
         {
@@ -236,13 +236,12 @@ function game() {
 
                 if(Math.random()>0.5){
                     investment+=1200;
-                    showStatus("💰 Bạn đầu tư thắng lớn!");
+                    showStatus("💰 Thắng lớn!");
                 }else{
                     investment+=200;
                     moneyEffect();
-                    showStatus("💸 Đầu tư thất bại!");
+                    showStatus("💸 Thua lỗ!");
                 }
-                game();
             }
         },
         {
@@ -253,39 +252,48 @@ function game() {
                 if(!lover){
                     lover=names[Math.floor(Math.random()*names.length)];
                     heartEffect();
-                    showStatus("😊 Bạn đang hẹn hò với "+lover);
+                    showStatus("😊 Hẹn hò với "+lover);
                 }else{
-                    showStatus("❤️ Bạn vẫn yêu "+lover);
+                    showStatus("❤️ Đang yêu "+lover);
                 }
-                game();
             }
         }
-    ]);
+    ];
 
-    if(age>=45) ending();
+    actions.forEach(a=>{
+        let btn=document.createElement("button");
+        btn.innerText=a.text;
+        btn.onclick=()=> next(a.action);
+        div.appendChild(btn);
+    });
 }
 
 /* END */
 function ending(){
-    let total=money+savings+investment;
-    let text="";
+    gameOver = true;
+
+    let total = money+savings+investment;
+    let text = "";
 
     if(total>30000 && lover){
-        text="🏆 Viên mãn";
+        text="🏆 Viên mãn-tiền không thiếu tình không vơi";
     }else if(total>30000){
-        text="💰 Giàu nhưng cô đơn";
+        text="💰 fuba cô độc-đếm tiền mỏi tay ko ai năm tay";
     }else if(lover){
-        text="❤️ Bình yên";
+        text="❤️ đời không plot twist";
     }else{
-        text="😢 Thất bại";
+        text="😢 Thất bại-chơi gì ngu vại bạn";
     }
 
     updateUI(text);
-    document.getElementById("buttons").innerHTML=
+
+    document.getElementById("buttons").innerHTML =
         '<button onclick="location.reload()">Chơi lại</button>';
 }
 
-game();
+/* INIT */
+updateUI();
+renderButtons();
 </script>
 
 </body>
