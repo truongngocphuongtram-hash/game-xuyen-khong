@@ -134,6 +134,8 @@ let job = "Ăn bám bố mẹ";
 let lover = null;
 let gameOver = false;
 
+let turn = 0; // ✅ thêm đếm lượt
+
 const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo Khang"];
 
 /* START */
@@ -173,23 +175,19 @@ function heartEffect(){
 function randomDrama(){
     let events = [];
 
-    // luôn có thể xảy ra
     events.push("🎁 Trúng thưởng-may mắn đến");
     events.push("😷 Bệnh tật");
 
-    // chỉ khi có người yêu
     if(lover){
         events.push("💔 Bị cắm sừng");
     }
 
-    // chỉ khi có việc làm
     if(job !== "Ăn bám bố mẹ"){
         events.push("🔥 +1 nhát dao từ đồng nghiệp");
     }
 
     let e = events[Math.floor(Math.random()*events.length)];
 
-    // hiệu ứng
     if(e.includes("Trúng")) money += 2000;
     if(e.includes("Bệnh")) money -= 500;
 
@@ -229,7 +227,18 @@ function next(action){
     action();
     growAge();
 
-    let drama=randomDrama();
+    turn++; // ✅ tăng lượt
+
+    let drama = "";
+
+    // ❌ 3 lượt đầu không có event
+    if(turn > 3){
+        // 🎯 30% xảy ra event
+        if(Math.random() < 0.3){
+            drama = randomDrama();
+        }
+    }
+
     updateUI(drama);
     renderButtons();
 
@@ -250,9 +259,6 @@ function renderButtons(){
 
     div.innerHTML="";
 
-    const actions=[ ...arguments.callee.actions || [] ];
-
-    // FIX: giữ nguyên actions gốc
     const realActions = [
         {
             text:"📚 Học",
