@@ -127,7 +127,7 @@ button {
 <script>
 let age = 18;
 let iq = 100;
-let money = 1000;
+let money = 1500;
 let savings = 0;
 let investment = 0;
 let job = "Ăn bám bố mẹ";
@@ -177,9 +177,10 @@ function randomDrama(){
 
     events.push("🎁 Trúng thưởng-may mắn đến");
     events.push("😷 Bệnh tật");
+    events.push("♠️ Dính vào vòng lao lý ♥️");
 
     if(lover){
-        events.push("💔 Bị cắm sừng");
+        events.push("💔 Bị cắm sừng-ôi kìa con trâu");
     }
 
     if(job !== "Ăn bám bố mẹ"){
@@ -190,6 +191,7 @@ function randomDrama(){
 
     if(e.includes("Trúng")) money += 2000;
     if(e.includes("Bệnh")) money -= 500;
+    if(e.includes("Dính")) money -= 1000;
 
     return e;
 }
@@ -217,7 +219,7 @@ function updateUI(drama=""){
 
 /* AGE */
 function growAge(){
-    age += 2;
+    age += 1;
 }
 
 /* NEXT */
@@ -243,7 +245,7 @@ function next(action){
     renderButtons();
 
     if(money<0){
-        endGame("💀 Phá sản");
+        endGame("💀 Tán gia bại sản");
         return;
     }
 
@@ -268,20 +270,46 @@ function renderButtons(){
                 showStatus("📚 Đang trog ngôi trg hạnh phúc");
             }
         },
-        {
-            text:"💼 Làm",
-            action:()=>{
-                money+=400+iq;
-                if(iq>180) job="🧠 Thiên tài";
-                else if(iq>140) job="💻 Lập trình viên-dân IT";
-                else job="👷 Công nhân";
-                showStatus("💼 Làm trâu làm ngụa");
-            }
+       {
+    text:"💼 Làm",
+    action:()=>{
+        money += 400 + iq;
+
+        if(iq > 130) {
+            job = "🧠 Thiên tài-CEO";
+        } 
+        else if(iq > 120) {
+            job = "💻 Lập trình viên - dân IT";
+        } 
+        else {
+            // Danh sách công việc random
+            let jobs = [
+                "👷 Công nhân",
+                "🎤 Hài độc thoại",
+                "🚚 Shipper",
+                "🧹 Lao công",
+                "🧱 Phụ hồ",
+                "🛡️ Bảo vệ",
+                "🍜 Phục vụ quán ăn",
+                "🏭 Công nhân nhà máy",
+                "🚕 Tài xế xe ôm",
+                "📦 Bốc vác",
+                "🛒 Nhân viên siêu thị",
+                "🛐 Bán vé số lề đường"
+            ];
+
+            // Random 1 job
+            job = jobs[Math.floor(Math.random() * jobs.length)];
+        }
+
+        showStatus("💼 Làm trâu làm ngựa");
+    }
+}
         },
         {
             text:"🏦 Tiết kiệm",
             action:()=>{
-                savings+=300;
+                savings+=350;
                 money-=300;
                 showStatus("🏦 Gửi nhà bank");
             }
@@ -291,10 +319,10 @@ function renderButtons(){
             action:()=>{
                 money-=500;
                 if(Math.random()>0.5){
-                    investment+=1500;
+                    investment+=3000;
                     showStatus("💰 Lãi lớn!");
                 }else{
-                    investment-=300;
+                    investment-=1500;
                     moneyEffect();
                     showStatus("💸 Lỗ!");
                 }
@@ -340,9 +368,9 @@ function ending(){
             "🏆 Cuộc đời viên mãn level max"
         ],
         richSolo: [
-            "💰 Fuba cô độc-đếm tiền mỗi tay, ko ai nắm tay",
+            "💰 Fuba cô độc - đếm tiền mỗi tay",
             "😎 Giàu nhưng không ai yêu",
-            "🏦 Chủ tịch nhưng thích ngủ 1 mình như HIEUTHUHAI"
+            "🏦 Chủ tịch ngủ 1 mình"
         ],
         midLove: [
             "💖 Đời không plot twist",
@@ -351,7 +379,7 @@ function ending(){
         ],
         midSolo: [
             "😐 Bình bình sống qua ngày",
-            "🐱 Sống với 50 con mèo không còn j hơn",
+            "🐱 Sống với 50 con mèo",
             "🧍‍♂️ Một mình nhưng ổn"
         ],
         poorLove: [
@@ -360,23 +388,43 @@ function ending(){
             "💑 Tình yêu vượt khó"
         ],
         poorSolo: [
-            "😢 Thất bại toàn tập-chơi dở vại má",
-            "💀 Đã nghèo còn cô đơn-gà vl",
-            "🪦 Game over cuộc đời-trùng sinh mãn kiếp"
+            "😢 Thất bại toàn tập",
+            "💀 Nghèo + cô đơn",
+            "🪦 Game over cuộc đời"
         ]
     };
 
     let pool = [];
 
-    if(total > 50000 && lover) pool = endings.richLove;
-    else if(total > 50000 && !lover) pool = endings.richSolo;
-    else if(total > 20000 && lover) pool = endings.midLove;
-    else if(total > 20000 && !lover) pool = endings.midSolo;
-    else if(total <= 10000 && lover) pool = endings.poorLove;
-    else pool = endings.poorSolo;
+    // 🔥 Hạ ngưỡng + mở rộng điều kiện
+    if(total > 40000){
+        pool = lover ? endings.richLove : endings.richSolo;
+    } 
+    else if(total > 15000){
+        pool = lover ? endings.midLove : endings.midSolo;
+    } 
+    else {
+        pool = lover ? endings.poorLove : endings.poorSolo;
+    }
+
+    // 🔥 RANDOM THÊM để tránh lặp
+    if(Math.random() < 0.3){
+        // 30% chance lấy random từ tất cả ending
+        let all = [
+            ...endings.richLove,
+            ...endings.richSolo,
+            ...endings.midLove,
+            ...endings.midSolo,
+            ...endings.poorLove,
+            ...endings.poorSolo
+        ];
+        pool = all;
+    }
 
     let result = pool[Math.floor(Math.random() * pool.length)];
 
+    showStatus(result);
+}
     endGame(result);
 }
 /* INIT */
