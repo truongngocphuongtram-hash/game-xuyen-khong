@@ -268,7 +268,6 @@ function renderButtons(){
                 iq+=5;
                 money-=200;
                 showStatus("📚 Đang trog ngôi trg hạnh phúc");
-            }
         },
        {
     text:"💼 Làm",
@@ -423,9 +422,7 @@ function ending(){
 
     let result = pool[Math.floor(Math.random() * pool.length)];
 
-    showStatus(result);
-}
-    endGame(result);
+    endGame(result); // ✅ đặt đúng chỗ
 }
 /* INIT */
 updateUI();
