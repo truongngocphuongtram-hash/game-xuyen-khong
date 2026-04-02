@@ -213,7 +213,7 @@ function updateUI(drama=""){
     🏦 ${savings}$<br>
     📈 ${investment}$<br>
     ❤️ ${lover ? lover : "Sói hoang cô độc"}
-    <br><progress value="${age}" max="45"></progress>
+    <br><progress value="${age}" max="60"></progress>
     `;
 }
 
@@ -268,24 +268,46 @@ function renderButtons(){
                 iq+=5;
                 money-=200;
                 showStatus("📚 Đang trog ngôi trg hạnh phúc");
-            }
         },
        {
     text:"💼 Làm",
     action:()=>{
-        money += 400 + iq;
 
-        if(iq > 130) {
-            job = "🧠 Thiên tài-CEO";
-        } 
-        else if(iq > 120) {
-            job = "💻 Lập trình viên - dân IT";
-        } 
-        else {
-            // Danh sách công việc random
+        // CHƯA CÓ NGHỀ → random nghề
+        if(!hasJob){
+            if(iq > 130) {
+                job = "🧠 Thiên tài-CEO";
+            } 
+            else if(iq > 120) {
+                job = "💻 Lập trình viên - dân IT";
+            } 
+            else {
+                let jobs = [
+                    "👷 Công nhân",
+                    "🎤 Hài độc thoại",
+                    "🚚 Shipper",
+                    "🧹 Lao công",
+                    "🧱 Phụ hồ",
+                    "🛡️ Bảo vệ",
+                    "🍜 Phục vụ quán ăn",
+                    "🏭 Công nhân nhà máy",
+                    "🚕 Tài xế xe ôm",
+                    "📦 Bốc vác",
+                    "🛒 Nhân viên siêu thị",
+                    "🛐 Bán vé số"
+                ];
+                job = jobs[Math.floor(Math.random() * jobs.length)];
+            }
+
+            hasJob = true;
+            showStatus("💼 Nhận việc: " + job);
+        }
+
+        // CÓ 1 LẦN ĐỔI NGHỀ
+        else if(canChangeJob){
             let jobs = [
                 "👷 Công nhân",
-                "🎤 Hài độc thoại",
+                "🎤 Hài độc thoại",
                 "🚚 Shipper",
                 "🧹 Lao công",
                 "🧱 Phụ hồ",
@@ -295,16 +317,29 @@ function renderButtons(){
                 "🚕 Tài xế xe ôm",
                 "📦 Bốc vác",
                 "🛒 Nhân viên siêu thị",
-                "🛐 Bán vé số lề đường"
+                "🛐 Bán vé số"
             ];
 
-            // Random 1 job
             job = jobs[Math.floor(Math.random() * jobs.length)];
+            canChangeJob = false;
+            showStatus("🔄 Đổi nghề thành: " + job);
         }
 
-        showStatus("💼 Làm trâu làm ngựa");
+        // SAU ĐÓ CHỈ KIẾM TIỀN
+        else{
+            let income = 400 + iq;
+
+            // buff theo nghề
+            if(job.includes("CEO")) income += 2000;
+            if(job.includes("IT")) income += 1000;
+
+            money += income;
+            showStatus("💰 Kiếm được " + income + "$");
+        }
     }
-        },
+
+            // Random 1 job
+            job = jobs[Math.floor(Math.random() * jobs.length)
         {
             text:"🏦 Tiết kiệm",
             action:()=>{
