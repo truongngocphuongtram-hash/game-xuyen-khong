@@ -1,129 +1,3 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Game Xuyên Không</title>
-
-<style>
-body {
-    margin: 0;
-    font-family: sans-serif;
-    background: url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564") center/cover;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.panel {
-    width: 420px;
-    background: #dcdcf5;
-    padding: 20px;
-    border-radius: 20px;
-    text-align: center;
-}
-
-#intro { display: block; }
-#game { display: none; }
-
-#status {
-    height: 25px;
-    overflow: hidden;
-    position: relative;
-}
-
-.statusText {
-    position: absolute;
-    width: 100%;
-    animation: slide 2.5s linear;
-}
-
-@keyframes slide {
-    0% { transform: translateY(20px); opacity: 0 }
-    20% { opacity: 1 }
-    80% { opacity: 1 }
-    100% { transform: translateY(-20px); opacity: 0 }
-}
-
-#drama {
-    font-style: italic;
-    height: 25px;
-}
-
-#stats {
-    text-align: left;
-}
-
-button {
-    background: #cbb7ff;
-    border: none;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-#effect {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.money {
-    position: absolute;
-    left: 50%;
-    top: 60%;
-    transform: translate(-50%, -50%);
-    font-size: 50px;
-    animation: moneyFly 2.5s ease-out forwards;
-}
-
-@keyframes moneyFly {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 1 }
-    100% { transform: translate(-50%, -200px) scale(2); opacity: 0 }
-}
-
-.heart {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 70px;
-    animation: heartBoom 2.5s ease-out forwards;
-}
-
-@keyframes heartBoom {
-    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1 }
-    50% { transform: translate(-50%, -50%) scale(2) }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0 }
-}
-</style>
-</head>
-
-<body>
-
-<div class="panel" id="intro">
-    <h2>Game Xuyên Không</h2>
-    <p>
-        Bạn xuyên không sang thế giới khác...<br><br>
-        Bắt đầu từ con số 0 🌀<br>
-        Tiền bạc - tình yêu - drama đang chờ bạn 💔<br><br>
-        Bạn sẽ trở thành ai?
-    </p>
-    <button onclick="startGame()">✨ Xuyên không</button>
-</div>
-
-<div class="panel" id="game">
-    <h2>Game Xuyên Không</h2>
-    <div id="status"></div>
-    <div id="drama"></div>
-    <div id="stats"></div>
-    <div id="buttons"></div>
-</div>
-
-<div id="effect"></div>
-
 <script>
 let age = 18;
 let iq = 100;
@@ -134,7 +8,11 @@ let job = "Ăn bám bố mẹ";
 let lover = null;
 let gameOver = false;
 
-let turn = 0; // ✅ thêm đếm lượt
+let turn = 0;
+
+// ✅ thêm biến còn thiếu
+let hasJob = false;
+let canChangeJob = true;
 
 const names = ["Phương Trâm","Bích Tuyền","Ngọc Nhi","Anh Thư","Bảo Khang"];
 
@@ -228,14 +106,11 @@ function next(action){
 
     action();
     growAge();
-
-    turn++; // ✅ tăng lượt
+    turn++;
 
     let drama = "";
 
-    // ❌ 3 lượt đầu không có event
     if(turn > 3){
-        // 🎯 30% xảy ra event
         if(Math.random() < 0.3){
             drama = randomDrama();
         }
@@ -262,85 +137,68 @@ function renderButtons(){
     div.innerHTML="";
 
     const realActions = [
+
         {
             text:"📚 Học",
             action:()=>{
                 iq+=5;
                 money-=200;
                 showStatus("📚 Đang trog ngôi trg hạnh phúc");
-             }
-        },
-       {
-    text:"💼 Làm",
-    action:()=>{
-
-        // CHƯA CÓ NGHỀ → random nghề
-        if(!hasJob){
-            if(iq > 130) {
-                job = "🧠 Thiên tài-CEO";
-            } 
-            else if(iq > 120) {
-                job = "💻 Lập trình viên - dân IT";
-            } 
-            else {
-                let jobs = [
-                    "👷 Công nhân",
-                    "🎤 Hài độc thoại",
-                    "🚚 Shipper",
-                    "🧹 Lao công",
-                    "🧱 Phụ hồ",
-                    "🛡️ Bảo vệ",
-                    "🍜 Phục vụ quán ăn",
-                    "🏭 Công nhân nhà máy",
-                    "🚕 Tài xế xe ôm",
-                    "📦 Bốc vác",
-                    "🛒 Nhân viên siêu thị",
-                    "🛐 Bán vé số"
-                ];
-                job = jobs[Math.floor(Math.random() * jobs.length)];
             }
+        },
 
-            hasJob = true;
-            showStatus("💼 Nhận việc: " + job);
-        }
+        {
+            text:"💼 Làm",
+            action:()=>{
 
-        // CÓ 1 LẦN ĐỔI NGHỀ
-        else if(canChangeJob){
-            let jobs = [
-                "👷 Công nhân",
-                "🎤 Hài độc thoại",
-                "🚚 Shipper",
-                "🧹 Lao công",
-                "🧱 Phụ hồ",
-                "🛡️ Bảo vệ",
-                "🍜 Phục vụ quán ăn",
-                "🏭 Công nhân nhà máy",
-                "🚕 Tài xế xe ôm",
-                "📦 Bốc vác",
-                "🛒 Nhân viên siêu thị",
-                "🛐 Bán vé số"
-            ];
+                if(!hasJob){
+                    if(iq > 130) {
+                        job = "🧠 Thiên tài-CEO";
+                    } 
+                    else if(iq > 120) {
+                        job = "💻 Lập trình viên - dân IT";
+                    } 
+                    else {
+                        let jobs = [
+                            "👷 Công nhân","🎤 Hài độc thoại","🚚 Shipper",
+                            "🧹 Lao công","🧱 Phụ hồ","🛡️ Bảo vệ",
+                            "🍜 Phục vụ quán ăn","🏭 Công nhân nhà máy",
+                            "🚕 Tài xế xe ôm","📦 Bốc vác",
+                            "🛒 Nhân viên siêu thị","🛐 Bán vé số"
+                        ];
+                        job = jobs[Math.floor(Math.random() * jobs.length)];
+                    }
 
-            job = jobs[Math.floor(Math.random() * jobs.length)];
-            canChangeJob = false;
-            showStatus("🔄 Đổi nghề thành: " + job);
-        }
+                    hasJob = true;
+                    showStatus("💼 Nhận việc: " + job);
+                }
 
-        // SAU ĐÓ CHỈ KIẾM TIỀN
-        else{
-            let income = 400 + iq;
+                else if(canChangeJob){
+                    let jobs = [
+                        "👷 Công nhân","🎤 Hài độc thoại","🚚 Shipper",
+                        "🧹 Lao công","🧱 Phụ hồ","🛡️ Bảo vệ",
+                        "🍜 Phục vụ quán ăn","🏭 Công nhân nhà máy",
+                        "🚕 Tài xế xe ôm","📦 Bốc vác",
+                        "🛒 Nhân viên siêu thị","🛐 Bán vé số"
+                    ];
 
-            // buff theo nghề
-            if(job.includes("CEO")) income += 2000;
-            if(job.includes("IT")) income += 1000;
+                    job = jobs[Math.floor(Math.random() * jobs.length)];
+                    canChangeJob = false;
+                    showStatus("🔄 Đổi nghề thành: " + job);
+                }
 
-            money += income;
-            showStatus("💰 Kiếm được " + income + "$");
-        }
-    }
+                else{
+                    let income = 400 + iq;
 
-            // Random 1 job
-            job = jobs[Math.floor(Math.random() * jobs.length)
+                    if(job.includes("CEO")) income += 2000;
+                    if(job.includes("IT")) income += 1000;
+
+                    money += income;
+                    showStatus("💰 Kiếm được " + income + "$");
+                }
+            }
+        },
+
         {
             text:"🏦 Tiết kiệm",
             action:()=>{
@@ -349,6 +207,7 @@ function renderButtons(){
                 showStatus("🏦 Gửi nhà bank");
             }
         },
+
         {
             text:"📈 Đầu tư",
             action:()=>{
@@ -363,6 +222,7 @@ function renderButtons(){
                 }
             }
         },
+
         {
             text:"❤️ Hẹn hò",
             action:()=>{
@@ -397,41 +257,16 @@ function ending(){
     let total = money + savings + investment;
 
     let endings = {
-        richLove: [
-            "👑 Vua xuyên không - tiền không thiếu tình không vơi",
-            "💎 Đại gia và em hàng ngon ghẻ",
-            "🏆 Cuộc đời viên mãn level max"
-        ],
-        richSolo: [
-            "💰 Fuba cô độc - đếm tiền mỗi tay",
-            "😎 Giàu nhưng không ai yêu",
-            "🏦 Chủ tịch ngủ 1 mình"
-        ],
-        midLove: [
-            "💖 Đời không plot twist",
-            "😊 Sống ổn định với tình yêu",
-            "🌸 Bình yên bên người thương"
-        ],
-        midSolo: [
-            "😐 Bình bình sống qua ngày",
-            "🐱 Sống với 50 con mèo",
-            "🧍‍♂️ Một mình nhưng ổn"
-        ],
-        poorLove: [
-            "❤️ Mụt túp lều tranh hai trái tim vàng",
-            "🥰 Nghèo nhưng hạnh phúc",
-            "💑 Tình yêu vượt khó"
-        ],
-        poorSolo: [
-            "😢 Thất bại toàn tập",
-            "💀 Nghèo + cô đơn",
-            "🪦 Game over cuộc đời"
-        ]
+        richLove: ["👑 Vua xuyên không- tiền không thiếu tình không vơi","💎 Đại gia và em hàng ngon nghẻ","🏆 Cuộc đời viên mãn level max"],
+        richSolo: ["💰 Fuba cô độc- đếm tiền mỗi tay","😎 Giàu nhưng không ai yêu","🏦 Chủ tịch thích ngủ 1 mình"],
+        midLove: ["💖 Đời không plot twist","😊 Ổn định","🌸 Hạnh phúc"],
+        midSolo: ["😐 Bình bình","🐱 Sống ổn định với 50 con mèo","🧍‍♂️ Một mình nhưng ổn"],
+        poorLove: ["❤️ Mụt túp lều tranh hai trái tim vàng","🥰 Nghèo nhưng hạnh phúc","💑 Tình yêu Vượt khó"],
+        poorSolo: ["😢 Thất bại toàn tập","💀 Đã nghèo còn cô đơn","🪦 Game over- chơi j ngu vại"]
     };
 
-    let pool = [];
+    let pool;
 
-    // 🔥 Hạ ngưỡng + mở rộng điều kiện
     if(total > 40000){
         pool = lover ? endings.richLove : endings.richSolo;
     } 
@@ -442,27 +277,11 @@ function ending(){
         pool = lover ? endings.poorLove : endings.poorSolo;
     }
 
-    // 🔥 RANDOM THÊM để tránh lặp
-    if(Math.random() < 0.3){
-        // 30% chance lấy random từ tất cả ending
-        let all = [
-            ...endings.richLove,
-            ...endings.richSolo,
-            ...endings.midLove,
-            ...endings.midSolo,
-            ...endings.poorLove,
-            ...endings.poorSolo
-        ];
-        pool = all;
-    }
-    job = jobs[Math.floor(Math.random() * jobs.length)];
-
-    endGame(result); // ✅ đặt đúng chỗ
+    let result = pool[Math.floor(Math.random() * pool.length)];
+    endGame(result);
 }
+
 /* INIT */
 updateUI();
 renderButtons();
 </script>
-
-</body>
-</html>
